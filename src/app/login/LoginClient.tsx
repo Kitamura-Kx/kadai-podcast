@@ -2,6 +2,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
@@ -43,7 +44,13 @@ export default function LoginClient() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md items-center px-4">
+    <main className="relative mx-auto flex min-h-screen w-full max-w-md items-center px-4">
+      <Link
+        href="/"
+        className="absolute right-4 top-4 rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-50"
+      >
+        新規登録へ
+      </Link>
       <form onSubmit={onSubmit} className="w-full space-y-4 rounded-xl border p-6 shadow-sm">
         <h1 className="text-xl font-bold">ログイン</h1>
         <input
