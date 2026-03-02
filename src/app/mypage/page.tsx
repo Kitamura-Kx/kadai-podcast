@@ -2,6 +2,7 @@ import { LikeButton } from "@/components/like-button";
 import { LogoutButton } from "@/components/logout-button";
 import { refreshStalePodcasts } from "@/lib/podcasts";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
 type Podcast = {
   id: string;
@@ -36,7 +37,15 @@ export default async function MyPage() {
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Podcasts</h1>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <Link
+            href="/register"
+            className="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            RSS URL登録画面へ戻る
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="space-y-6">
