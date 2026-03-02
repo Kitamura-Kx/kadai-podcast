@@ -1,4 +1,5 @@
-import { LikeButton } from "@/components/like-button";
+import Link from "next/link";
+import { EpisodeLikeButton } from "@/components/episode-like-button";
 import { LogoutButton } from "@/components/logout-button";
 import { refreshStalePodcasts } from "@/lib/podcasts";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
@@ -24,19 +25,31 @@ export default async function MyPage() {
 
   const [podcastsResult, episodesResult, likesResult] = await Promise.all([
     supabase.from("podcasts").select("id, title, description").order("created_at", { ascending: false }),
-    supabase.from("episodes").select("id, podcast_id, title, published_at, audio_url").order("published_at", { ascending: false }).limit(120),
-    supabase.from("podcast_likes").select("podcast_id"),
+    supabase
+      .from("episodes")
+      .select("id, podcast_id, title, published_at, audio_url")
+      .order("published_at", { ascending: false })
+      .limit(120),
+    supabase.from("episode_likes").select("episode_id"),
   ]);
 
   const podcasts = (podcastsResult.data ?? []) as Podcast[];
   const episodes = (episodesResult.data ?? []) as Episode[];
-  const likedSet = new Set((likesResult.data ?? []).map((like: { podcast_id: string }) => like.podcast_id));
+  const likedSet = new Set((likesResult.data ?? []).map((like: { episode_id: string }) => like.episode_id));
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Podcasts</h1>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <Link href="/" className="rounded-md border px-3 py-1.5 text-sm">
+            登録画面へ戻る
+          </Link>
+          <Link href="/mypage/likes" className="rounded-md border px-3 py-1.5 text-sm">
+            いいね一覧
+          </Link>
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -45,12 +58,9 @@ export default async function MyPage() {
 
           return (
             <section key={podcast.id} className="rounded-xl border bg-white p-4 shadow-sm">
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="font-semibold">{podcast.title ?? "Untitled"}</h2>
-                  <p className="line-clamp-2 text-sm text-gray-600">{podcast.description ?? "説明なし"}</p>
-                </div>
-                <LikeButton podcastId={podcast.id} initialLiked={likedSet.has(podcast.id)} />
+              <div className="mb-3">
+                <h2 className="font-semibold">{podcast.title ?? "Untitled"}</h2>
+                <p className="line-clamp-2 text-sm text-gray-600">{podcast.description ?? "説明なし"}</p>
               </div>
 
               <div className="flex gap-3 overflow-x-auto pb-1">
@@ -63,6 +73,7 @@ export default async function MyPage() {
                     {episode.audio_url ? (
                       <audio controls className="mt-2 w-full" src={episode.audio_url} preload="none" />
                     ) : null}
+                    <EpisodeLikeButton episodeId={episode.id} initialLiked={likedSet.has(episode.id)} />
                   </article>
                 ))}
                 {ownEpisodes.length === 0 ? <p className="text-sm text-gray-500">エピソードなし</p> : null}
