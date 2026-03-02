@@ -12,17 +12,17 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => null);
-  const podcastId = body?.podcastId;
+  const episodeId = body?.episodeId;
   const like = Boolean(body?.like);
 
-  if (!podcastId || typeof podcastId !== "string") {
-    return NextResponse.json({ error: "podcastId is required" }, { status: 400 });
+  if (!episodeId || typeof episodeId !== "string") {
+    return NextResponse.json({ error: "episodeId is required" }, { status: 400 });
   }
 
-  const query = supabase.from("podcast_likes");
+  const query = supabase.from("episode_likes");
   const { error } = like
-    ? await query.insert({ podcast_id: podcastId })
-    : await query.delete().eq("podcast_id", podcastId);
+    ? await query.insert({ episode_id: episodeId })
+    : await query.delete().eq("episode_id", episodeId);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
