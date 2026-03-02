@@ -1,9 +1,5 @@
-import { RegisterForm } from "@/components/register-form";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return (
-    <main className="mx-auto min-h-screen w-full max-w-2xl px-4 py-8">
-      <RegisterForm />
-    </main>
-  );
+  redirect("/login");
 }
